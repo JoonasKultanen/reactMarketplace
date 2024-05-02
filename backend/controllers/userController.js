@@ -1,6 +1,10 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const db = require("../db");
+const express = require("express");
+const app = express();
+
+app.use(express.json());
 
 // Create User
 exports.createUser = async (req, res) => {
@@ -10,10 +14,16 @@ exports.createUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     db.run(
-      `INSERT INTO users (username, password, phone) VALUES (?, ?, ?)`,
+      `INSERT INTO users (username, password, phone) VALUES (?,?,?)`,
       [username, hashedPassword, phone],
       function (err) {
         if (err) {
+          // Check if the error is due to a taken username or phone number
+          if (err.code === "SQLITE_CONSTRAINT") {
+            return res
+              .status(400)
+              .json({ error: "Username or phone number is already taken." });
+          }
           return res.status(400).json({ error: err.message });
         }
         res.status(201).json({ id: this.lastID });
@@ -23,7 +33,6 @@ exports.createUser = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
 // Login User
 exports.loginUser = (req, res) => {
   const { username, password } = req.body;

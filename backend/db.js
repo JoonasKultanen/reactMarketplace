@@ -19,10 +19,10 @@ db.run("PRAGMA foreign_keys = ON;");
 db.serialize(() => {
   db.run(
     `CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY,
-    username TEXT NOT NULL,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL,
-    phone TEXT NOT NULL)`
+    phone TEXT NOT NULL UNIQUE)`
   );
   db.run(
     `CREATE TABLE IF NOT EXISTS listings (
