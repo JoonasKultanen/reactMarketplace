@@ -85,7 +85,7 @@ const HomePage = () => {
       <h2>All Listings</h2>
       <div className="listings-container">
         {filteredListings.map((listing, index) => (
-          <Listing key={index} listing={listing} />
+          <Listing key={index} listing={listing} showAction={false} />
         ))}
       </div>
     </div>

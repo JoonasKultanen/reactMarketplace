@@ -33,6 +33,7 @@ exports.createUser = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 // Login User
 exports.loginUser = (req, res) => {
   const { username, password } = req.body;
@@ -64,8 +65,19 @@ exports.loginUser = (req, res) => {
           expiresIn: "1h",
         });
 
-        // Send the token in the response
-        res.status(200).json({ message: "Logged in successfully", token });
+        // Include user details in the response
+        const userDetails = {
+          id: row.id,
+          username: row.username,
+          phone: row.phone,
+        };
+
+        // Send the token and user details in the response
+        res.status(200).json({
+          message: "Logged in successfully",
+          token,
+          user: userDetails,
+        });
       }
     );
   } catch (error) {

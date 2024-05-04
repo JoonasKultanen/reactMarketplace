@@ -14,7 +14,8 @@ const ListingDetailsPage = () => {
           `http://localhost:5000/api/listings/${id}`
         );
         const data = await response.json();
-        setListing(data);
+        const fullImageUrl = `http://localhost:5000${data.picture_url}`;
+        setListing({ ...data, picture_url: fullImageUrl });
       } catch (error) {
         console.error("Error fetching listing details:", error);
         navigate("/");
@@ -30,16 +31,20 @@ const ListingDetailsPage = () => {
 
   return (
     <div className="listing-details">
+      <div className="back-button-container">
+        <button className="back-button" onClick={() => navigate(-1)}>
+          Back
+        </button>
+      </div>
       <div className="listing-image">
         <img src={listing.picture_url} alt={listing.title} />
       </div>
       <div className="listing-info">
         <h2>{listing.title}</h2>
         <p>{listing.description}</p>
-        <p>{listing.price}</p>
+        <p>Price: {listing.price}€</p>
         <h3>Owner Information</h3>
         <p>Name: {listing.owner.name}</p>
-        <p>Email: {listing.owner.email}</p>
         <p>Phone: {listing.owner.phone}</p>
       </div>
     </div>

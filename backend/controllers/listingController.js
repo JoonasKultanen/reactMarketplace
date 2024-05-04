@@ -10,6 +10,35 @@ exports.getListings = (req, res) => {
   });
 };
 
+// Get Listing by ID
+exports.getListingById = (req, res) => {
+  const listingId = req.params.id;
+  const db = require("../db");
+
+  db.get(
+    `SELECT listings.*, users.username, users.phone
+      FROM listings
+      JOIN users ON listings.owner = users.id
+      WHERE listings.id = ?`,
+    [listingId],
+    (err, row) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      if (!row) {
+        return res.status(404).json({ error: "Listing not found" });
+      }
+      res.json({
+        ...row,
+        owner: {
+          name: row.username,
+          phone: row.phone,
+        },
+      });
+    }
+  );
+};
+
 // Create Listing
 exports.createListing = (req, res) => {
   const { title, description, price, owner, category, picture_url } = req.body;
