@@ -26,12 +26,16 @@ db.serialize(() => {
   );
   db.run(
     `CREATE TABLE IF NOT EXISTS listings (
-    id INTEGER PRIMARY KEY,
-    title TEXT NOT NULL,
-    description TEXT,
-    price REAL NOT NULL,
-    owner INTEGER,
-    FOREIGN KEY(owner) REFERENCES users(id))`
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      description TEXT,
+      price REAL NOT NULL,
+      owner INTEGER,
+      category TEXT,
+      picture_url TEXT,
+      FOREIGN KEY(owner) REFERENCES users(id)
+     );
+     `
   );
 });
 

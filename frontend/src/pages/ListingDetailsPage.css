@@ -1,0 +1,31 @@
+.listing-details {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+.listing-image {
+  flex: 0 0 70%; /* Take up 70% of the available width */
+  max-width: 70%; /* Ensure it doesn't exceed 70% */
+}
+
+.listing-image img {
+  width: 100%;
+  height: auto;
+}
+
+.listing-info {
+  flex: 0 0 30%; /* Take up 30% of the available width */
+  max-width: 30%; /* Ensure it doesn't exceed 30% */
+  padding-left: 20px; /* Add some space between the image and the info */
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .listing-image,
+  .listing-info {
+    flex: 0 0 100%; /* Stack on top of each other on smaller screens */
+    max-width: 100%;
+  }
+}

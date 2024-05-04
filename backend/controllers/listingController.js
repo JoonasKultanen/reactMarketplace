@@ -1,12 +1,23 @@
+// Get Listings
+exports.getListings = (req, res) => {
+  const db = require("../db");
+
+  db.all("SELECT * FROM listings", [], (err, rows) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.json(rows);
+  });
+};
+
 // Create Listing
 exports.createListing = (req, res) => {
-  const { title, description, price, owner } = req.body;
-  const userId = req.user.id;
+  const { title, description, price, owner, category, picture_url } = req.body;
   const db = require("../db");
 
   db.run(
-    `INSERT INTO listings (title, description, price, owner) VALUES (?, ?, ?, ?)`,
-    [title, description, price, owner],
+    `INSERT INTO listings (title, description, price, owner, category, picture_url) VALUES (?, ?, ?, ?, ?, ?)`,
+    [title, description, price, owner, category, picture_url],
     function (err) {
       if (err) {
         return res.status(400).json({ error: err.message });
@@ -18,7 +29,7 @@ exports.createListing = (req, res) => {
 
 // Update Listing
 exports.updateListing = (req, res) => {
-  const { title, description, price } = req.body;
+  const { title, description, price, category, picture_url } = req.body;
   const listingId = req.params.id;
   const db = require("../db");
 
@@ -42,8 +53,8 @@ exports.updateListing = (req, res) => {
       }
 
       db.run(
-        `UPDATE listings SET title = ?, description = ?, price = ? WHERE id = ?`,
-        [title, description, price, listingId],
+        `UPDATE listings SET title = ?, description = ?, price = ?, category = ?, picture_url = ? WHERE id = ?`,
+        [title, description, price, category, picture_url, listingId],
         function (err) {
           if (err) {
             return res.status(400).json({ error: err.message });

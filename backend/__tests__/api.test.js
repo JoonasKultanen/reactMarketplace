@@ -22,19 +22,21 @@ const initializeTestDatabase = () => {
   db.serialize(() => {
     db.run(
       `CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY,
-        username TEXT NOT NULL,
-        password TEXT NOT NULL,
-        phone TEXT NOT NULL)`
+         id INTEGER PRIMARY KEY,
+         username TEXT NOT NULL,
+         password TEXT NOT NULL,
+         phone TEXT NOT NULL)`
     );
     db.run(
       `CREATE TABLE IF NOT EXISTS listings (
-        id INTEGER PRIMARY KEY,
-        title TEXT NOT NULL,
-        description TEXT,
-        price REAL NOT NULL,
-        owner INTEGER,
-        FOREIGN KEY(owner) REFERENCES users(id))`
+         id INTEGER PRIMARY KEY,
+         title TEXT NOT NULL,
+         description TEXT,
+         price REAL NOT NULL,
+         owner INTEGER,
+         category TEXT,
+         picture_url TEXT,
+         FOREIGN KEY(owner) REFERENCES users(id))`
     );
   });
 
@@ -136,6 +138,8 @@ describe("API Endpoints", () => {
       description: "This is a test listing",
       price: 100,
       owner: "1",
+      category: "Electronics",
+      picture_url: "http://example.com/image.jpg",
     };
 
     const response = await request(app)
@@ -164,6 +168,8 @@ describe("API Endpoints", () => {
       title: "Updated Title",
       description: "Updated Description",
       price: 150,
+      category: "Clothing",
+      picture_url: "http://example.com/new-image.jpg",
     };
 
     const response = await request(app)
