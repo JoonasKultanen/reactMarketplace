@@ -8,8 +8,8 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  BACKEND_IMAGE_NAME: tite-5g00ev16-3003/2024-final-project-JoonasKultanen-backend
-  FRONTEND_IMAGE_NAME: tite-5g00ev16-3003/2024-final-project-JoonasKultanen-frontend
+  BACKEND_IMAGE_NAME: tite-5g00ev16-3003/2024-final-project-jkultanen-backend
+  FRONTEND_IMAGE_NAME: tite-5g00ev16-3003/2024-final-project-jkultanen-frontend
 
 jobs:
   test:
@@ -133,23 +133,23 @@ jobs:
       # Create stack config and sync to the VM server
       - name: Prepare stack configuration
         run: |
-          mkdir -p market/market_backend
-          mkdir -p market/market_frontend
-          cp docker-compose.server.yml market/docker-compose.yml
-          echo "${{ secrets.PROD_ENV_FILE }}" > market/.env
-          echo "BACKEND_IMAGE=${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}" >> market/.env
-          echo "FRONTEND_IMAGE=${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}" >> market/.env
+          mkdir -p marketplace/backend
+          mkdir -p marketplace/frontend
+          cp docker-compose.server.yml marketplace/docker-compose.yml
+          echo "${{ secrets.PROD_ENV_FILE }}" > marketplace/.env
+          echo "BACKEND_IMAGE=${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}" >> marketplace/.env
+          echo "FRONTEND_IMAGE=${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}" >> marketplace/.env
 
       # Sync the configuration to the remote server
       - name: Sync stack configuration to remote server
-        run: rsync -r market "${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_SERVER }}:./"
+        run: rsync -r marketplace "${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_SERVER }}:./"
 
       # SSH into VM server and bring up the stack
       - name: Start containers via SSH
         run: ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_SERVER }}
           "
           docker login ${{ env.REGISTRY }} -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }};
-          cd market;
+          cd marketplace;
           docker-compose pull;
           docker-compose up -d;
           "
