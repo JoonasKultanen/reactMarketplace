@@ -67,9 +67,9 @@ describe("API Endpoints", () => {
   // 1. Test for user registration
   it("should register a new user", async () => {
     const newUser = {
-      username: "testuser",
-      password: "testpass",
-      phone: "1234567890",
+      username: "testuser2",
+      password: "testpass2",
+      phone: "2222222222",
     };
 
     const response = await request(app)
@@ -85,8 +85,8 @@ describe("API Endpoints", () => {
   // 2. Test for user login
   it("should login a user", async () => {
     const userCredentials = {
-      username: "testuser",
-      password: "testpass",
+      username: "testuser2",
+      password: "testpass2",
     };
 
     const response = await request(app)
@@ -101,8 +101,8 @@ describe("API Endpoints", () => {
   it("should get user details", async () => {
     // Login to get token
     const loginResponse = await request(app).post("/api/auth/login").send({
-      username: "testuser",
-      password: "testpass",
+      username: "testuser2",
+      password: "testpass2",
     });
 
     const token = loginResponse.body.token;
@@ -126,8 +126,8 @@ describe("API Endpoints", () => {
   it("should create a listing", async () => {
     // Login to get token
     const loginResponse = await request(app).post("/api/auth/login").send({
-      username: "testuser",
-      password: "testpass",
+      username: "testuser2",
+      password: "testpass2",
     });
 
     const token = loginResponse.body.token;
@@ -157,8 +157,8 @@ describe("API Endpoints", () => {
   it("should update a listing", async () => {
     // Login to get token
     const loginResponse = await request(app).post("/api/auth/login").send({
-      username: "testuser",
-      password: "testpass",
+      username: "testuser2",
+      password: "testpass2",
     });
 
     const token = loginResponse.body.token;
@@ -188,8 +188,8 @@ describe("API Endpoints", () => {
   it("should delete a listing", async () => {
     // Login to get token
     const loginResponse = await request(app).post("/api/auth/login").send({
-      username: "testuser",
-      password: "testpass",
+      username: "testuser2",
+      password: "testpass2",
     });
 
     const token = loginResponse.body.token;
