@@ -41,11 +41,11 @@ db.serialize(() => {
   );
 });
 
-// Insert a sample user
 async function insertSampleUser() {
   const username = "testuser";
   const password = "testpass";
   const phone = "1234567890";
+  let hashedPassword;
 
   // Check if the user already exists
   const checkUserExists = new Promise((resolve, reject) => {
@@ -59,11 +59,25 @@ async function insertSampleUser() {
     });
   });
 
+  // Check if the phone number already exists
+  const checkPhoneExists = new Promise((resolve, reject) => {
+    const checkSql = "SELECT id FROM users WHERE phone = ?;";
+    db.get(checkSql, [phone], (checkErr, row) => {
+      if (checkErr) {
+        reject(checkErr);
+      } else {
+        resolve(row);
+      }
+    });
+  });
+
   try {
-    const row = await checkUserExists;
-    if (!row) {
-      // User does not exist, proceed with insertion
-      const hashedPassword = await bcrypt.hash(password, 10);
+    const userExists = await checkUserExists;
+    const phoneExists = await checkPhoneExists;
+
+    if (!userExists && !phoneExists) {
+      // User and phone number do not exist, proceed with insertion
+      hashedPassword = await bcrypt.hash(password, 10);
 
       const insertSql =
         "INSERT INTO users (username, password, phone) VALUES (?, ?, ?);";
@@ -79,7 +93,12 @@ async function insertSampleUser() {
         }
       );
     } else {
-      console.log(`User with username '${username}' already exists.`);
+      if (userExists) {
+        console.log(`User with username '${username}' already exists.`);
+      }
+      if (phoneExists) {
+        console.log(`Phone number '${phone}' is already in use.`);
+      }
     }
   } catch (error) {
     console.error(
@@ -90,10 +109,11 @@ async function insertSampleUser() {
 }
 
 // Fill the listings table with sample data
-function processListings() {
+async function processListings() {
   const listings = JSON.parse(fs.readFileSync("./listings.json", "utf8"));
 
-  listings.forEach((listing) => {
+  // Use map to create an array of promises
+  const promises = listings.map(async (listing) => {
     const { title, description, price, owner, category, picture_url } = listing;
 
     // Ensure the owner exists before inserting the listing
@@ -108,36 +128,63 @@ function processListings() {
       });
     });
 
-    checkOwnerExists
-      .then((row) => {
-        if (row) {
-          const insertSql =
-            "INSERT INTO listings (title, description, price, owner, category, picture_url) VALUES (?, ?, ?, ?, ?, ?);";
+    try {
+      const row = await checkOwnerExists;
+      if (row) {
+        const insertSql =
+          "INSERT INTO listings (title, description, price, owner, category, picture_url) VALUES (?, ?, ?, ?, ?, ?);";
+        return new Promise((resolve, reject) => {
           db.run(
             insertSql,
             [title, description, price, owner, category, picture_url],
             function (insertErr) {
               if (insertErr) {
                 console.error(insertErr.message);
-                return;
+                reject(insertErr);
+              } else {
+                console.log(
+                  `Listing with ID ${this.lastID} added successfully.`
+                );
+                resolve();
               }
-              console.log(`Listing with ID ${this.lastID} added successfully.`);
             }
           );
-        } else {
-          console.error(`Owner with ID ${owner} does not exist.`);
-        }
-      })
-      .catch((error) => {
-        console.error(
-          "Error checking owner or inserting listing:",
-          error.message
-        );
-      });
+        });
+      } else {
+        console.error(`Owner with ID ${owner} does not exist.`);
+        throw new Error(`Owner with ID ${owner} does not exist.`);
+      }
+    } catch (error) {
+      console.error(
+        "Error checking owner or inserting listing:",
+        error.message
+      );
+      throw error;
+    }
   });
+
+  // Wait for all promises to resolve
+  try {
+    await Promise.all(promises);
+  } catch (error) {
+    console.error("Error processing listings:", error.message);
+  }
 }
 
-insertSampleUser();
-processListings();
+async function main() {
+  try {
+    // Wait for a sample user to be inserted
+    await insertSampleUser();
+    // Insert sample listings
+    await processListings();
+  } catch (error) {
+    console.error(
+      "Error inserting sample user or processing listings:",
+      error.message
+    );
+  }
+}
+
+main();
 
 module.exports = db;
