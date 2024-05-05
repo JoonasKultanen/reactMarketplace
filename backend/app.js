@@ -12,7 +12,7 @@ require("dotenv").config();
 // Middleware
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "https://reactmarketplace.onrender.com",
   })
 );
 app.use(express.json());
