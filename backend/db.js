@@ -1,6 +1,7 @@
 const fs = require("fs");
 const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
+const bcrypt = require("bcrypt");
 
 // Define the path
 const dbPath = path.join(__dirname, "marketplace.db");
@@ -41,34 +42,51 @@ db.serialize(() => {
 });
 
 // Insert a sample user
-function insertSampleUser() {
+async function insertSampleUser() {
   const username = "testuser";
   const password = "testpass";
   const phone = "1234567890";
 
   // Check if the user already exists
-  const checkSql = "SELECT id FROM users WHERE username = ?;";
-  db.get(checkSql, [username], (checkErr, row) => {
-    if (checkErr) {
-      console.error(checkErr.message);
-      return;
-    }
+  const checkUserExists = new Promise((resolve, reject) => {
+    const checkSql = "SELECT id FROM users WHERE username = ?;";
+    db.get(checkSql, [username], (checkErr, row) => {
+      if (checkErr) {
+        reject(checkErr);
+      } else {
+        resolve(row);
+      }
+    });
+  });
 
+  try {
+    const row = await checkUserExists;
     if (!row) {
       // User does not exist, proceed with insertion
+      const hashedPassword = await bcrypt.hash(password, 10);
+
       const insertSql =
         "INSERT INTO users (username, password, phone) VALUES (?, ?, ?);";
-      db.run(insertSql, [username, password, phone], function (insertErr) {
-        if (insertErr) {
-          console.error(insertErr.message);
-          return;
+      db.run(
+        insertSql,
+        [username, hashedPassword, phone],
+        function (insertErr) {
+          if (insertErr) {
+            console.error(insertErr.message);
+            return;
+          }
+          console.log(`User with ID ${this.lastID} added successfully.`);
         }
-        console.log(`User with ID ${this.lastID} added successfully.`);
-      });
+      );
     } else {
       console.log(`User with username '${username}' already exists.`);
     }
-  });
+  } catch (error) {
+    console.error(
+      "Error checking user or inserting sample user:",
+      error.message
+    );
+  }
 }
 
 // Fill the listings table with sample data
@@ -78,33 +96,44 @@ function processListings() {
   listings.forEach((listing) => {
     const { title, description, price, owner, category, picture_url } = listing;
 
-    // Check if the listing already exists
-    const checkSql =
-      "SELECT id FROM listings WHERE title = ? AND description = ? AND owner = ?;";
-    db.get(checkSql, [title, description, owner], (checkErr, row) => {
-      if (checkErr) {
-        console.error(checkErr.message);
-        return;
-      }
-
-      if (!row) {
-        const insertSql =
-          "INSERT INTO listings (title, description, price, owner, category, picture_url) VALUES (?, ?, ?, ?, ?, ?);";
-        db.run(
-          insertSql,
-          [title, description, price, owner, category, picture_url],
-          function (insertErr) {
-            if (insertErr) {
-              console.error(insertErr.message);
-              return;
-            }
-            console.log(`Listing with ID ${this.lastID} added successfully.`);
-          }
-        );
-      } else {
-        console.log(`Listing already exists with ID ${row.id}`);
-      }
+    // Ensure the owner exists before inserting the listing
+    const checkOwnerExists = new Promise((resolve, reject) => {
+      const checkSql = "SELECT id FROM users WHERE id = ?;";
+      db.get(checkSql, [owner], (checkErr, row) => {
+        if (checkErr) {
+          reject(checkErr);
+        } else {
+          resolve(row);
+        }
+      });
     });
+
+    checkOwnerExists
+      .then((row) => {
+        if (row) {
+          const insertSql =
+            "INSERT INTO listings (title, description, price, owner, category, picture_url) VALUES (?, ?, ?, ?, ?, ?);";
+          db.run(
+            insertSql,
+            [title, description, price, owner, category, picture_url],
+            function (insertErr) {
+              if (insertErr) {
+                console.error(insertErr.message);
+                return;
+              }
+              console.log(`Listing with ID ${this.lastID} added successfully.`);
+            }
+          );
+        } else {
+          console.error(`Owner with ID ${owner} does not exist.`);
+        }
+      })
+      .catch((error) => {
+        console.error(
+          "Error checking owner or inserting listing:",
+          error.message
+        );
+      });
   });
 }
 
