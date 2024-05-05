@@ -11,10 +11,12 @@ const ListingDetailsPage = () => {
     const fetchListingDetails = async () => {
       try {
         const response = await fetch(
-          `http://localhost:5000/api/listings/${id}`
+          `${import.meta.env.VITE_API_URL}/api/listings/${id}`
         );
         const data = await response.json();
-        const fullImageUrl = `http://localhost:5000${data.picture_url}`;
+        const fullImageUrl = `${import.meta.env.VITE_API_URL}${
+          data.picture_url
+        }`;
         setListing({ ...data, picture_url: fullImageUrl });
       } catch (error) {
         console.error("Error fetching listing details:", error);

@@ -19,7 +19,7 @@ const ProfilePage = () => {
       try {
         setIsLoading(true);
         const response = await fetch(
-          `http://localhost:5000/api/listings?owner=${userId}`,
+          `${import.meta.env.VITE_API_URL}/api/listings?owner=${userId}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("authToken")}`,
@@ -32,7 +32,7 @@ const ProfilePage = () => {
         const data = await response.json();
         const listingsWithFullImageUrls = data.map((listing) => ({
           ...listing,
-          picture_url: `http://localhost:5000${listing.picture_url}`,
+          picture_url: `${import.meta.env.VITE_API_URL}${listing.picture_url}`,
         }));
         setListings(listingsWithFullImageUrls);
       } catch (error) {

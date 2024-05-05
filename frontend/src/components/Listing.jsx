@@ -12,7 +12,7 @@ const Listing = ({ listing, showActions, onDelete }) => {
   const handleDelete = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/listings/${listing.id}`,
+        `${import.meta.env.VITE_API_URL}/api/listings/${listing.id}`,
         {
           method: "DELETE",
           headers: {

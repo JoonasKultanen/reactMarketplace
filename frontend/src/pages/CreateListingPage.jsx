@@ -15,7 +15,7 @@ const CreateListingPage = () => {
 
   useEffect(() => {
     if (listingId) {
-      fetch(`http://localhost:5000/api/listings/${listingId}`)
+      fetch(`${import.meta.env.VITE_API_URL}/api/listings/${listingId}`)
         .then((response) => {
           if (!response.ok) {
             throw new Error("Network response was not ok");
@@ -44,7 +44,7 @@ const CreateListingPage = () => {
     };
 
     fetch(
-      `http://localhost:5000/api/listings/${listingId || ""}`,
+      `${import.meta.env.VITE_API_URL}/api/listings/${listingId || ""}`,
       requestOptions
     )
       .then((response) => {
