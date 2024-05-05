@@ -8,8 +8,8 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  BACKEND_IMAGE_NAME: tite-5g00ev16-3003/2024-final-project-jkultanen-backend
-  FRONTEND_IMAGE_NAME: tite-5g00ev16-3003/2024-final-project-jkultanen-frontend
+  BACKEND_IMAGE_NAME: joonaskultanen/reactmarketplace-backend
+  FRONTEND_IMAGE_NAME: joonaskultanen/reactmarketplace-frontend
 
 jobs:
   test:
@@ -91,71 +91,71 @@ jobs:
           push: true
           tags: "${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}"
 
-  deploy:
-    name: Server Deployment
-    timeout-minutes: 5
-    runs-on: ubuntu-latest
+  # deploy:
+  #   name: Server Deployment
+  #   timeout-minutes: 5
+  #   runs-on: ubuntu-latest
 
-    needs: build
+  #   needs: build
 
-    permissions:
-      contents: read
-      packages: write
+  #   permissions:
+  #     contents: read
+  #     packages: write
 
-    steps:
-      - name: Fetch code
-        uses: actions/checkout@v4.1.1
+  #   steps:
+  #     - name: Fetch code
+  #       uses: actions/checkout@v4.1.1
 
-      - name: Install OpenVPN and RSync
-        run: |
-          sudo apt update
-          sudo apt --assume-yes --no-install-recommends install openvpn openvpn-systemd-resolved rsync
+  #     - name: Install OpenVPN and RSync
+  #       run: |
+  #         sudo apt update
+  #         sudo apt --assume-yes --no-install-recommends install openvpn openvpn-systemd-resolved rsync
 
-      - name: Setup the VPN configs
-        run: |
-          echo "${{ secrets.VPN_CONFIG }}" > config.ovpn
-          echo "${{ secrets.VPN_PASSWORD }}" > secret.txt
+  #     - name: Setup the VPN configs
+  #       run: |
+  #         echo "${{ secrets.VPN_CONFIG }}" > config.ovpn
+  #         echo "${{ secrets.VPN_PASSWORD }}" > secret.txt
 
-      - name: Connect VPN
-        run: sudo openvpn --config config.ovpn --daemon --log vpn.log
+  #     - name: Connect VPN
+  #       run: sudo openvpn --config config.ovpn --daemon --log vpn.log
 
-      - name: Wait for VPN connection
-        timeout-minutes: 1
-        run: until ping -c1 ${{ secrets.REMOTE_SERVER }}; do sleep 10; done
+  #     - name: Wait for VPN connection
+  #       timeout-minutes: 1
+  #       run: until ping -c1 ${{ secrets.REMOTE_SERVER }}; do sleep 10; done
 
-      - name: Setup SSH
-        run: |
-          mkdir -p ~/.ssh/
-          echo "${{ secrets.DEPLOY_KEY_PRIVATE }}" | base64 -d > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.REMOTE_SERVER }} >> ~/.ssh/known_hosts
+  #     - name: Setup SSH
+  #       run: |
+  #         mkdir -p ~/.ssh/
+  #         echo "${{ secrets.DEPLOY_KEY_PRIVATE }}" | base64 -d > ~/.ssh/id_rsa
+  #         chmod 600 ~/.ssh/id_rsa
+  #         ssh-keyscan -H ${{ secrets.REMOTE_SERVER }} >> ~/.ssh/known_hosts
 
-      # Create stack config and sync to the VM server
-      - name: Prepare stack configuration
-        run: |
-          mkdir -p marketplace/backend
-          mkdir -p marketplace/frontend
-          cp docker-compose.server.yml marketplace/docker-compose.yml
-          echo "${{ secrets.PROD_ENV_FILE }}" > marketplace/.env
-          echo "BACKEND_IMAGE=${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}" >> marketplace/.env
-          echo "FRONTEND_IMAGE=${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}" >> marketplace/.env
+  #     # Create stack config and sync to the VM server
+  #     - name: Prepare stack configuration
+  #       run: |
+  #         mkdir -p marketplace/backend
+  #         mkdir -p marketplace/frontend
+  #         cp docker-compose.server.yml marketplace/docker-compose.yml
+  #         echo "${{ secrets.PROD_ENV_FILE }}" > marketplace/.env
+  #         echo "BACKEND_IMAGE=${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}" >> marketplace/.env
+  #         echo "FRONTEND_IMAGE=${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}" >> marketplace/.env
 
-      # Sync the configuration to the remote server
-      - name: Sync stack configuration to remote server
-        run: rsync -r marketplace "${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_SERVER }}:./"
+  #     # Sync the configuration to the remote server
+  #     - name: Sync stack configuration to remote server
+  #       run: rsync -r marketplace "${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_SERVER }}:./"
 
-      # SSH into VM server and bring up the stack
-      - name: Start containers via SSH
-        run: ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_SERVER }}
-          "
-          docker login ${{ env.REGISTRY }} -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }};
-          cd marketplace;
-          docker-compose pull;
-          docker-compose up -d;
-          "
+  #     # SSH into VM server and bring up the stack
+  #     - name: Start containers via SSH
+  #       run: ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_SERVER }}
+  #         "
+  #         docker login ${{ env.REGISTRY }} -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }};
+  #         cd marketplace;
+  #         docker-compose pull;
+  #         docker-compose up -d;
+  #         "
 
-      - name: Kill VPN connection
-        if: always()
-        run: |
-          sudo chmod 777 vpn.log
-          sudo killall openvpn
+  #     - name: Kill VPN connection
+  #       if: always()
+  #       run: |
+  #         sudo chmod 777 vpn.log
+  #         sudo killall openvpn
