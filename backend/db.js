@@ -1,3 +1,4 @@
+const fs = require("fs");
 const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
 
@@ -38,5 +39,76 @@ db.serialize(() => {
      `
   );
 });
+
+// Insert a sample user
+function insertSampleUser() {
+  const username = "testuser";
+  const password = "testpass";
+  const phone = "1234567890";
+
+  // Check if the user already exists
+  const checkSql = "SELECT id FROM users WHERE username = ?;";
+  db.get(checkSql, [username], (checkErr, row) => {
+    if (checkErr) {
+      console.error(checkErr.message);
+      return;
+    }
+
+    if (!row) {
+      // User does not exist, proceed with insertion
+      const insertSql =
+        "INSERT INTO users (username, password, phone) VALUES (?, ?, ?);";
+      db.run(insertSql, [username, password, phone], function (insertErr) {
+        if (insertErr) {
+          console.error(insertErr.message);
+          return;
+        }
+        console.log(`User with ID ${this.lastID} added successfully.`);
+      });
+    } else {
+      console.log(`User with username '${username}' already exists.`);
+    }
+  });
+}
+
+// Fill the listings table with sample data
+function processListings() {
+  const listings = JSON.parse(fs.readFileSync("./listings.json", "utf8"));
+
+  listings.forEach((listing) => {
+    const { title, description, price, owner, category, picture_url } = listing;
+
+    // Check if the listing already exists
+    const checkSql =
+      "SELECT id FROM listings WHERE title = ? AND description = ? AND owner = ?;";
+    db.get(checkSql, [title, description, owner], (checkErr, row) => {
+      if (checkErr) {
+        console.error(checkErr.message);
+        return;
+      }
+
+      if (!row) {
+        const insertSql =
+          "INSERT INTO listings (title, description, price, owner, category, picture_url) VALUES (?, ?, ?, ?, ?, ?);";
+        db.run(
+          insertSql,
+          [title, description, price, owner, category, picture_url],
+          function (insertErr) {
+            if (insertErr) {
+              console.error(insertErr.message);
+              return;
+            }
+            console.log(`Listing with ID ${this.lastID} added successfully.`);
+          }
+        );
+      } else {
+        console.log(`Listing already exists with ID ${row.id}`);
+      }
+    });
+  });
+}
+
+insertSampleUser();
+processListings();
 
 module.exports = db;
