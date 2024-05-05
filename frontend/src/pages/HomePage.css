@@ -1,0 +1,32 @@
+.home-page {
+  width: 70%;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.home-page h2 {
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  font-size: 32px;
+  border-bottom: 1px solid #eee;
+}
+
+.categories-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.category-button {
+  flex: 1 0 calc(25% - 10px);
+}
+
+.listings-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}

@@ -1,0 +1,29 @@
+# User Registration
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+ "id": "1",
+ "username": "testuser",
+ "password": "testpass",
+ "phone": "1234567890"
+}
+
+###
+
+# User Login
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+ "username": "testuser",
+ "password": "testpass"
+}
+
+###
+
+# Fetch User Details
+GET http://localhost:5000/api/auth/details/1
+Authorization: Bearer <token here>
+Content-Type: application/json
+

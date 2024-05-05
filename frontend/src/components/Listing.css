@@ -1,0 +1,23 @@
+.listing {
+  flex: 0 0 calc(33.333% - 20px);
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.7);
+  border-radius: 3px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.listing h3 {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.listing img {
+  width: 300px;
+  height: 250px;
+  object-fit: cover;
+  padding-bottom: 10px;
+}

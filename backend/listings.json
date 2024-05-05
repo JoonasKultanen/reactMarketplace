@@ -1,0 +1,114 @@
+[
+  {
+    "title": "Ikea Chair",
+    "description": "Ikea chair, good condition.",
+    "price": 10.0,
+    "owner": 1,
+    "category": "Furniture",
+    "picture_url": "/images/chair.png"
+  },
+  {
+    "title": "Ikea Shelving Unit",
+    "description": "Ikea shelving unit, pristine condition.",
+    "price": 250.0,
+    "owner": 1,
+    "category": "Furniture",
+    "picture_url": "/images/shelvingUnit.png"
+  },
+  {
+    "title": "PS2 + games",
+    "description": "A well used PS2 with some games.",
+    "price": 120.0,
+    "owner": 1,
+    "category": "Electronics",
+    "picture_url": "/images/ps2.png"
+  },
+  {
+    "title": "Sodastream",
+    "description": "Working Sodastream machine, good condition.",
+    "price": 70.0,
+    "owner": 1,
+    "category": "Electronics",
+    "picture_url": "/images/sodastream.png"
+  },
+  {
+    "title": "Converse Shoes",
+    "description": "Clean and in great condition. Willing to barter on price.",
+    "price": 100.0,
+    "owner": 1,
+    "category": "Clothing",
+    "picture_url": "/images/converse.png"
+  },
+  {
+    "title": "Hoodie",
+    "description": "Good condition, wore it only a couple times.",
+    "price": 40.0,
+    "owner": 1,
+    "category": "Clothing",
+    "picture_url": "/images/hoodie.png"
+  },
+  {
+    "title": "Volkswagen Golf",
+    "description": "2002 model, 511,000 km driven, still working fine.",
+    "price": 400.0,
+    "owner": 1,
+    "category": "Cars",
+    "picture_url": "/images/volkswagen.png"
+  },
+  {
+    "title": "Nissan Skyline",
+    "description": "2008 model, 135,000 km driven, extremely good condition.",
+    "price": 12000.0,
+    "owner": 1,
+    "category": "Cars",
+    "picture_url": "/images/nissan.png"
+  },
+  {
+    "title": "Lawn Mower",
+    "description": "Pushable, works fine.",
+    "price": 50.0,
+    "owner": 1,
+    "category": "Home & Garden",
+    "picture_url": "/images/lawnmower.png"
+  },
+  {
+    "title": "Hedge Trimmer",
+    "description": "Good condition.",
+    "price": 150.0,
+    "owner": 1,
+    "category": "Home & Garden",
+    "picture_url": "/images/hedgeTrimmer.png"
+  },
+  {
+    "title": "Cat",
+    "description": "Found it on the street.",
+    "price": 10.0,
+    "owner": 1,
+    "category": "Pets & Supplies",
+    "picture_url": "/images/cat.png"
+  },
+  {
+    "title": "Cat food",
+    "description": "Not opened.",
+    "price": 15.0,
+    "owner": 1,
+    "category": "Pets & Supplies",
+    "picture_url": "/images/catFood.png"
+  },
+  {
+    "title": "Ice Hockey Stick",
+    "description": "Not used at all. Brand new",
+    "price": 200.0,
+    "owner": 1,
+    "category": "Sports & Outdoors",
+    "picture_url": "/images/hockeyStick.png"
+  },
+  {
+    "title": "Ice Skates",
+    "description": "Well used. Still work fine.",
+    "price": 45.0,
+    "owner": 1,
+    "category": "Sports & Outdoors",
+    "picture_url": "/images/skates.png"
+  }
+]
