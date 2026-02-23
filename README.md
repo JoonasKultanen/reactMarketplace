@@ -2,9 +2,6 @@
 
 React Marketplace is an online marketplace application that allows users to list, browse, and sell items. It features a secure login and registration system, item listing with detailed information, browsing capabilities with filters and search, and user profiles for managing listings and personal information.
 
-## Deployment
-
-The application is currently deployed at [https://reactmarketplace.onrender.com/](https://reactmarketplace.onrender.com/).
 
 ## Features
 
